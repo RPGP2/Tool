@@ -14,6 +14,18 @@ class Array
     self.replace(self[xRange].map{|item| item.to_a[yRange]})
     return self
   end
+  
+  def self.createFromImage(image)
+    ary = []
+    image.width.times do |x|
+      image.height.times do |y|
+        4.times do |i|
+          ary << image[x,y][i]
+        end
+      end
+    end
+    return ary
+  end
 end
 
 class Tip
