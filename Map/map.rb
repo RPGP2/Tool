@@ -7,7 +7,32 @@ require "dxlibrary"
 
 class Array
   def quarry(xRange, yRange)
-    return self[xRange].map{|item| item[yRange]}
+    return self[xRange].map{|item| item.to_a[yRange]}
+  end
+  
+  def quarry!(xRange, yRange)
+    self.replace(self[xRange].map{|item| item.to_a[yRange]})
+    return self
+  end
+end
+
+class Tip
+  #チップ情報を集約するクラス
+  #@sizeと@imageと@walkableを持つ。
+  
+  attr_accessor :walkable
+  attr_reader :image
+  
+  def initialize(size, walkable = false)
+    @size = size
+    @image = Image.new(@size, @size)
+    @walkable = walkable
+  end
+  
+  def image=(v)
+    w = [@size, v.width].min
+    h = [@size, v.height].min
+    @image.draw(0,0,v,0,0,w,h)
   end
 end
 
@@ -43,7 +68,7 @@ class Map
     @m_gnd = Array.new(@yoko){Array.new(@tate){0}}
     @m_fnt = Array.new(@yoko){Array.new(@tate){0}}
     @walkable = Array.new(@yoko){Array.new(@tate){false}}
-    @tip = Array.new(2500){0}
+    @tip = Array.new(2500){Tip.new(@one)}
   end
   
   #生成方法2:*.mapを開く
