@@ -5,6 +5,12 @@
 
 require "dxlibrary"
 
+class Array
+  def quarry(xRange, yRange)
+    return self[xRange].map{|item| item[yRange]}
+  end
+end
+
 class Map
   #生成方法1:大きさとデフォルトの色を指定
   def initialize
@@ -34,21 +40,10 @@ class Map
     
     #ここで必要なデータは揃う
     @one, @tate, @yoko = sizeSet.text(:one).to_i, sizeSet.text(:tate).to_i, sizeSet.text(:yoko).to_i
-    @m_gnd = Image.new(@one * @yoko, @one * @tate)
-    @m_fnt = Image.new(@one * @yoko, @one * @tate)
-    @walkable = Array.new(@yoko)
-    @tip = Array.new(@yoko)
-    @tile = Array.new(@yoko)
-    @yoko.times do |i|
-      @walkable[i] = Array.new(@tate)
-      @tip[i] = Array.new(@tate)
-      @tile[i] = Array.new(@tate)
-      @tate.times do |j|
-        @walkable[i][j] = false
-        @tip[i][j] = 0
-        @tile[i][j] = 0
-      end
-    end
+    @m_gnd = Array.new(@yoko){Array.new(@tate){0}}
+    @m_fnt = Array.new(@yoko){Array.new(@tate){0}}
+    @walkable = Array.new(@yoko){Array.new(@tate){false}}
+    @tip = Array.new(2500){0}
   end
   
   #生成方法2:*.mapを開く
