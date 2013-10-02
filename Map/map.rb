@@ -153,6 +153,8 @@ class Map
     2500.times do |i|
       tip.push(Tip.load(one,str[i + 6]))
     end
+    
+    Map.new(one,tate,yoko,m_gnd,n_fnt,walkable,tip)
   end
   
   #データのテキスト化
@@ -175,7 +177,11 @@ end
 Window.gameloop do
   Window.drawFont(0,0,"ニートなう!!",Font.new(20))
   if Input.x == 1
-    a = Map.make
+    str = "5\n5\n5\n0+0+0+0+0/0+0+0+0+0/0+0+0+0+0/0+0+0+0+0/0+0+0+0+0\n0+0+0+0+0/0+0+0+0+0/0+0+0+0+0/0+0+0+0+0/0+0+0+0+0\n0+0+0+0+0/0+0+0+0+0/0+0+0+0+0/0+0+0+0+0/0+0+0+0+0\n"
+    2500.times do
+      str += ([0] * 4 * 5 * 5).join("+") + "/" + "0"
+    end
+    a = Map.load(str)
     a.to_s
     break
   end
