@@ -64,7 +64,7 @@ class Tip
   end
   
   def to_s(divI = "+", div2 = "/")
-    return Array.createFromImage(@image).join(divI) + div2 + walkable ? "1" : "0"
+    return Array.createFromImage(@image).join(divI) + div2 + (walkable ? "1" : "0")
   end
 end
 
@@ -113,7 +113,10 @@ class Map
     str = "#{@one}\n#{@tate}\n#{@yoko}\n" #大きさ
     str += @m_gnd.join2D("+","/") + "\n" #地面の配列
     str += @m_fnt.join2D("+","/") + "\n" #前面の配列
-    str += @walkable.join2D("+","/"){|obj| obj ? 1 : 0}
+    str += @walkable.join2D("+","/"){|obj| obj ? 1 : 0} + "\n"
+    @tip.each do |obj|
+      str += obj.to_s + "\n"
+    end
     return str
   end
 end
