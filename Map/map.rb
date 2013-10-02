@@ -15,10 +15,12 @@ class Array
     return self
   end
   
-  def join2D(divX, divY)
+  def join2D(divX, divY, &b)
     str = []
     self.each do |ary|
-      str.push(ary.join(divX))
+      str.push(ary)
+      str[-1].each{|obj| obj = b.call(obj)} if b
+      str[-1] = str[-1].join(divX)
     end
     str = str.join(divY)
     return str
@@ -111,7 +113,7 @@ class Map
     str = "#{@one}\n#{tate}\n#{@yoko}\n" #大きさ
     str += Array.createFromImage(@m_gnd).join("+") + "\n" #地面の画像(配列)
     str += Array.createFromImage(@m_fnt).join("+") + "\n" #前面の画像(配列)
-    
+    str += @walkable.join("")
   end
 end
 
