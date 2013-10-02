@@ -68,8 +68,14 @@ class Tip
     @walkable = walkable
   end
   
-  def self.load(data)
+  def self.load(size, data)
+    str = data.split("/")
+    walkable = str[1] == "1"
+    image = str[0].split("+").collect{|obj| obj.to_i}
+    tip = Tip.new(size,walkable)
+    tip.image = Image.createFromArray(size, size, image)
     
+    tip
   end
   
   def image=(v) #引数はDXRuby::Image
@@ -78,8 +84,8 @@ class Tip
     @image.draw(0,0,v,0,0,w,h)
   end
   
-  def to_s(divI = "+", div2 = "/")
-    return Array.createFromImage(@image).join(divI) + div2 + (walkable ? "1" : "0")
+  def to_s
+    return Array.createFromImage(@image).join("+") + "/" + (walkable ? "1" : "0")
   end
 end
 
@@ -144,6 +150,9 @@ class Map
     m_fnt = str[4].split2D("+","/"){|obj| obj.to_i}
     walkable = str[5].split2D("+","/"){|obj| obj == "1"}
     tip = []
+    2500.times do |i|
+      tip.push(Tip.load(one,str[i + 6]))
+    end
   end
   
   #データのテキスト化
