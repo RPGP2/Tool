@@ -26,5 +26,7 @@ module DXRuby
       
       thread.value
     end
+    
+    module_function :join
   end
 end
