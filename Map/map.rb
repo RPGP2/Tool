@@ -110,10 +110,7 @@ class Map
   
   #データのテキスト化
   def to_s
-    to_sEnd = false
-    str = ""
-    
-    thread = Thread.new{ #処理はこの中に入れて並列処理
+    str = Window.join("Mapファイルを文字列化しています。") do
       str = "#{@one}\n#{@tate}\n#{@yoko}\n" #大きさ
       str += @m_gnd.join2D("+","/") + "\n" #地面の配列
       str += @m_fnt.join2D("+","/") + "\n" #前面の配列
@@ -121,21 +118,10 @@ class Map
       @tip.each do |obj|
         str += obj.to_s + "\n"
       end
-      to_sEnd = true
-    }
-    
-    font = Font.new(12)
-    old_cap = Window.caption
-    Window.caption = "処理中"
-    while !to_sEnd do
-      Window.gameloop do
-        Window.drawFont((Window.width - font.getWidth("Mapファイルを文字列化しています。")) / 2, (Window.height - 12) / 2, "Mapファイルを文字列化しています。", font)
-        break if to_sEnd
-      end
+      str
     end
-    Window.caption = old_cap
     
-    return str
+    str
   end
 end
 
@@ -143,7 +129,7 @@ Window.gameloop do
   Window.drawFont(0,0,"ニートなう!!",Font.new(20))
   if Input.x == 1
     a = Map.new
-    a.to_s
+    print a.to_s
     break
   end
 end
