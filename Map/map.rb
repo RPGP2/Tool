@@ -7,12 +7,12 @@ require "dxlibrary"
 
 class Array
   def quarry(xRange, yRange)
-    return self[xRange].map{|item| item.to_a[yRange]}
+    self[xRange].map{|item| item.to_a[yRange]}
   end
   
   def quarry!(xRange, yRange)
     self.replace(self[xRange].map{|item| item.to_a[yRange]})
-    return self
+    self
   end
   
   def join2D(divX, divY, &b)
@@ -23,12 +23,12 @@ class Array
       str[-1] = str[-1].join(divX)
     end
     str = str.join(divY)
-    return str
+    str
   end
   
   def join2D!(divX, divY)
     self.replace(self.join2D(divX, divY))
-    return self
+    self
   end
   
   def self.createFromImage(image)
@@ -40,13 +40,18 @@ class Array
         end
       end
     end
-    return ary
+    ary
   end
 end
 
 class String
   def split2D(divX, divY, &b)
-    
+    str = self.split(divY)
+    str.each_with_index do |v,i|
+      str[i] = v.split(divX)
+      str[i].collect!{|obj| b.call(obj)} if b
+    end
+    str
   end
 end
 
@@ -63,7 +68,11 @@ class Tip
     @walkable = walkable
   end
   
-  def image=(v)
+  def self.load(data)
+    
+  end
+  
+  def image=(v) #引数はDXRuby::Image
     w = [@size, v.width].min
     h = [@size, v.height].min
     @image.draw(0,0,v,0,0,w,h)
@@ -131,7 +140,10 @@ class Map
     one = str[0].to_i
     tate = str[1].to_i
     yoko = str[2].to_i
-    m_gnd = str[3].split("/")
+    m_gnd = str[3].split2D("+","/"){|obj| obj.to_i}
+    m_fnt = str[4].split2D("+","/"){|obj| obj.to_i}
+    walkable = str[5].split2D("+","/"){|obj| obj == "1"}
+    tip = []
   end
   
   #データのテキスト化
