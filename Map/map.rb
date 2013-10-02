@@ -18,8 +18,8 @@ class Array
   def join2D(divX, divY, &b)
     str = []
     self.each do |ary|
-      str.push(ary)
-      str[-1].each{|obj| obj = b.call(obj)} if b
+      str.push(ary.clone)
+      str[-1].collect!{|obj| b.call(obj)} if b
       str[-1] = str[-1].join(divX)
     end
     str = str.join(divY)
@@ -110,14 +110,16 @@ class Map
   
   #データのテキスト化
   def to_s
-    str = "#{@one}\n#{tate}\n#{@yoko}\n" #大きさ
-    str += Array.createFromImage(@m_gnd).join("+") + "\n" #地面の画像(配列)
-    str += Array.createFromImage(@m_fnt).join("+") + "\n" #前面の画像(配列)
-    str += @walkable.join("")
+    str = "#{@one}\n#{@tate}\n#{@yoko}\n" #大きさ
+    str += @m_gnd.join2D("+","/") + "\n" #地面の配列
+    str += @m_fnt.join2D("+","/") + "\n" #前面の配列
+    str += @walkable.join2D("+","/"){|obj| obj ? 1 : 0}
+    return str
   end
 end
 
 Window.gameloop do
   Window.drawFont(0,0,"ニートなう!!",Font.new(20))
   a = Map.new if Input.x == 1
+  print a.to_s
 end
