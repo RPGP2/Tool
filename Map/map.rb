@@ -110,19 +110,40 @@ class Map
   
   #データのテキスト化
   def to_s
-    str = "#{@one}\n#{@tate}\n#{@yoko}\n" #大きさ
-    str += @m_gnd.join2D("+","/") + "\n" #地面の配列
-    str += @m_fnt.join2D("+","/") + "\n" #前面の配列
-    str += @walkable.join2D("+","/"){|obj| obj ? 1 : 0} + "\n"
-    @tip.each do |obj|
-      str += obj.to_s + "\n"
+    to_sEnd = false
+    str = ""
+    
+    thread = Thread.new{ #処理はこの中に入れて並列処理
+      str = "#{@one}\n#{@tate}\n#{@yoko}\n" #大きさ
+      str += @m_gnd.join2D("+","/") + "\n" #地面の配列
+      str += @m_fnt.join2D("+","/") + "\n" #前面の配列
+      str += @walkable.join2D("+","/"){|obj| obj ? 1 : 0} + "\n" #歩ける範囲の配列
+      @tip.each do |obj|
+        str += obj.to_s + "\n"
+      end
+      to_sEnd = true
+    }
+    
+    font = Font.new(12)
+    old_cap = Window.caption
+    Window.caption = "処理中"
+    while !to_sEnd do
+      Window.gameloop do
+        Window.drawFont((Window.width - font.getWidth("Mapファイルを文字列化しています。")) / 2, (Window.height - 12) / 2, "Mapファイルを文字列化しています。", font)
+        break if to_sEnd
+      end
     end
+    Window.caption = old_cap
+    
     return str
   end
 end
 
 Window.gameloop do
   Window.drawFont(0,0,"ニートなう!!",Font.new(20))
-  a = Map.new if Input.x == 1
-  print a.to_s
+  if Input.x == 1
+    a = Map.new
+    a.to_s
+    break
+  end
 end
