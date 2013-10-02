@@ -44,6 +44,12 @@ class Array
   end
 end
 
+class String
+  def split2D(divX, divY, &b)
+    
+  end
+end
+
 class Tip
   #チップ情報を集約するクラス
   #@sizeと@imageと@walkableを持つ。
@@ -120,7 +126,12 @@ class Map
   
   #生成方法2:*.mapを開く
   def self.load(filename)
+    str = read(filename).split("\n")
     
+    one = str[0].to_i
+    tate = str[1].to_i
+    yoko = str[2].to_i
+    m_gnd = str[3].split("/")
   end
   
   #データのテキスト化
