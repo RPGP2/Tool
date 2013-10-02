@@ -15,6 +15,20 @@ class Array
     return self
   end
   
+  def join2D(divX, divY)
+    str = []
+    self.each do |ary|
+      str.push(ary.join(divX))
+    end
+    str = str.join(divY)
+    return str
+  end
+  
+  def join2D!(divX, divY)
+    self.replace(self.join2D(divX, divY))
+    return self
+  end
+  
   def self.createFromImage(image)
     ary = []
     image.width.times do |x|
@@ -45,6 +59,10 @@ class Tip
     w = [@size, v.width].min
     h = [@size, v.height].min
     @image.draw(0,0,v,0,0,w,h)
+  end
+  
+  def to_s(divI = "+", div2 = "/")
+    return Array.createFromImage(@image).join(divI) + div2 + walkable ? "1" : "0"
   end
 end
 
@@ -85,6 +103,14 @@ class Map
   
   #生成方法2:*.mapを開く
   def self.load
+    
+  end
+  
+  #データのテキスト化
+  def to_s
+    str = "#{@one}\n#{tate}\n#{@yoko}\n" #大きさ
+    str += Array.createFromImage(@m_gnd).join("+") + "\n" #地面の画像(配列)
+    str += Array.createFromImage(@m_fnt).join("+") + "\n" #前面の画像(配列)
     
   end
 end
