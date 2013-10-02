@@ -69,23 +69,20 @@ class Tip
 end
 
 class Map
-  attr_accessor :one, :tate, :yoko, :m_gnd, :m_fnt, :walkable, :tip
-  
   #Mapクラスのインスタンスを作成する。が、ユーザの使用は想定していない。
   #ユーザは、Map.makeや.loadを使用する。
-  def initialize
-    @one = 0
-    @tate = 0
-    @yoko = 0
-    @m_gnd = 0
-    @m_fnt = 0
-    @walkable = 0
-    @tip = 0
+  def initialize(one, tate, yoko, m_gnd, m_fnt, walkable, tip)
+    @one = one
+    @tate = tate
+    @yoko = yoko
+    @m_gnd = m_gnd
+    @m_fnt = m_fnt
+    @walkable = walkable
+    @tip = tip
   end
   
   #生成方法1:大きさとデフォルトの色を指定
   def self.make
-    newMap = Map.new
     sizeSet = WS::WSBuildWindow.new("Mapサイズ指定",
       "1チップの大きさ:",[:one,:textbox,"1000"],"px",WSCr,
       "縦",[:tate,:textbox,"1000"],"マス×横",[:yoko,:textbox,"1000"],"マス",WSCr,
@@ -111,13 +108,14 @@ class Map
     Window.caption = old_cap
     
     #ここで必要なデータは揃う
-    newMap.one, newMap.tate, newMap.yoko = sizeSet.text(:one).to_i, sizeSet.text(:tate).to_i, sizeSet.text(:yoko).to_i
-    newMap.m_gnd = Array.new(newMap.yoko){Array.new(newMap.tate){0}}
-    newMap.m_fnt = Array.new(newMap.yoko){Array.new(newMap.tate){0}}
-    newMap.walkable = Array.new(newMap.yoko){Array.new(newMap.tate){false}}
-    newMap.tip = Array.new(2500){Tip.new(newMap.one)}
-    
-    return newMap
+
+    Map.new(sizeSet.text(:one).to_i,
+      sizeSet.text(:tate).to_i,
+      sizeSet.text(:yoko).to_i,
+      Array.new(sizeSet.text(:yoko).to_i){Array.new(sizeSet.text(:tate).to_i){0}},
+      Array.new(sizeSet.text(:yoko).to_i){Array.new(sizeSet.text(:tate).to_i){0}},
+      Array.new(sizeSet.text(:yoko).to_i){Array.new(sizeSet.text(:tate).to_i){false}},
+      Array.new(2500){Tip.new(sizeSet.text(:one).to_i)})
   end
   
   #生成方法2:*.mapを開く
@@ -146,7 +144,6 @@ Window.gameloop do
   Window.drawFont(0,0,"ニートなう!!",Font.new(20))
   if Input.x == 1
     a = Map.make
-    p a
     a.to_s
     break
   end
