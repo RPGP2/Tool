@@ -2,6 +2,13 @@
 
 #dxruby,dxrubyws,standardguiを読み込む事が前提
 #フィールド、町、その他のあらゆるマップのクラスを定義
+=begin
+ArrayとかStringとかに色々機能付けた。
+最終的な実装は、
+Map.make --Mapインスタンスを新しく作るWindowを作り実行し、生成したMap.newを返す。
+Map.load --Mapファイルのアドレスを渡すと読み込んでMapインスタンスを生成し返す。
+Map#to_s --Mapファイルに保存するStringを生成して返す。
+=end
 
 require "dxlibrary"
 
@@ -141,20 +148,20 @@ class Map
   
   #生成方法2:*.mapを開く
   def self.load(filename)
-    str = read(filename).split("\n")
+    str = IO.read(filename).split("\n")
     
     one = str[0].to_i
     tate = str[1].to_i
     yoko = str[2].to_i
     m_gnd = str[3].split2D("+","/"){|obj| obj.to_i}
     m_fnt = str[4].split2D("+","/"){|obj| obj.to_i}
-    walkable = str[5].split2D("+","/"){|obj| obj == "1"}
+    walkable = str[5].split2D("","/"){|obj| obj == "1"}
     tip = []
     2500.times do |i|
       tip.push(Tip.load(one,str[i + 6]))
     end
     
-    Map.new(one,tate,yoko,m_gnd,n_fnt,walkable,tip)
+    Map.new(one,tate,yoko,m_gnd,m_fnt,walkable,tip)
   end
   
   #データのテキスト化
@@ -163,7 +170,7 @@ class Map
       str = "#{@one}\n#{@tate}\n#{@yoko}\n" #大きさ
       str += @m_gnd.join2D("+","/") + "\n" #地面の配列
       str += @m_fnt.join2D("+","/") + "\n" #前面の配列
-      str += @walkable.join2D("+","/"){|obj| obj ? 1 : 0} + "\n" #歩ける範囲の配列
+      str += @walkable.join2D("","/"){|obj| obj ? 1 : 0} + "\n" #歩ける範囲の配列
       @tip.each do |obj|
         str += obj.to_s + "\n"
       end
@@ -174,15 +181,14 @@ class Map
   end
 end
 
+=begin
 Window.gameloop do
   Window.drawFont(0,0,"ニートなう!!",Font.new(20))
   if Input.x == 1
-    str = "5\n5\n5\n0+0+0+0+0/0+0+0+0+0/0+0+0+0+0/0+0+0+0+0/0+0+0+0+0\n0+0+0+0+0/0+0+0+0+0/0+0+0+0+0/0+0+0+0+0/0+0+0+0+0\n0+0+0+0+0/0+0+0+0+0/0+0+0+0+0/0+0+0+0+0/0+0+0+0+0\n"
-    2500.times do
-      str += ([0] * 4 * 5 * 5).join("+") + "/" + "0"
-    end
-    a = Map.load(str)
+    File.write("D:/testmap.map",Map.make.to_s)
+    a = Map.load("D:/testmap.map")
     a.to_s
     break
   end
 end
+=end
